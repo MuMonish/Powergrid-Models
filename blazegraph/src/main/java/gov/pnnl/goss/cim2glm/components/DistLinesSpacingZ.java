@@ -89,8 +89,10 @@ public class DistLinesSpacingZ extends DistLineSegment {
 			len = Double.parseDouble (soln.get("?len").toString());
 			basev = Double.parseDouble (soln.get("?basev").toString());
 			spacing = soln.get("?spacing").toString();
-			wname = soln.get("?wname").toString();
-			wclass = soln.get("?wclass").toString();
+			//wname = soln.get("?wname").toString();
+			wname = "ASCR_6/0";
+			//wclass = soln.get("?wclass").toString();
+			wclass = "OverheadWireInfo";
 			nwires = 0;
 			phases = OptionalString (soln, "?phases", "");
 			if (phases.length() > 0) {

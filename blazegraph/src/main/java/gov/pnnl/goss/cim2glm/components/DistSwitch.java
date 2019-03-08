@@ -126,7 +126,6 @@ public abstract class DistSwitch extends DistComponent {
 	public String GetJSONSymbols(HashMap<String,DistCoordinates> map, HashMap<String,DistXfmrTank> mapTank) {
 		DistCoordinates pt1 = map.get(CIMClass() + ":" + name + ":1");
 		DistCoordinates pt2 = map.get(CIMClass() + ":" + name + ":2");
-
 		StringBuilder buf = new StringBuilder ();
 
 		buf.append ("{\"name\":\"" + name + "\"");
@@ -136,9 +135,11 @@ public abstract class DistSwitch extends DistComponent {
 		buf.append (",\"open\":\"" + Boolean.toString(open) +"\"");
 		buf.append (",\"x1\":" + Double.toString(pt1.x));
 		buf.append (",\"y1\":" + Double.toString(pt1.y));
+		if (pt2 != null) {
 		buf.append (",\"x2\":" + Double.toString(pt2.x));
 		buf.append (",\"y2\":" + Double.toString(pt2.y));
 		buf.append ("}");
+		}
 		return buf.toString();
 	}
 
