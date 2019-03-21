@@ -23,4 +23,5 @@ convert_xml.bat
 convert_xml.sh
 ConvertCDPSM.dss
 table.txt
-
+.idea
+*.iml
