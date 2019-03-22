@@ -136,9 +136,18 @@ public abstract class DistSwitch extends DistComponent {
 		buf.append (",\"open\":\"" + Boolean.toString(open) +"\"");
 		buf.append (",\"x1\":" + Double.toString(pt1.x));
 		buf.append (",\"y1\":" + Double.toString(pt1.y));
-		buf.append (",\"x2\":" + Double.toString(pt2.x));
-		buf.append (",\"y2\":" + Double.toString(pt2.y));
-		buf.append ("}");
+
+		//EJL 3/22/2019 -Avista models define switch a single point
+		if(pt2 != null) {
+			buf.append(",\"x2\":" + Double.toString(pt2.x));
+			buf.append(",\"y2\":" + Double.toString(pt2.y));
+		}
+		else //unsure if a second point is needed; copy pt1 just in case
+		{
+			buf.append(",\"x2\":" + Double.toString(pt1.x));
+			buf.append(",\"y2\":" + Double.toString(pt1.y));
+		}
+		buf.append("}");
 		return buf.toString();
 	}
 

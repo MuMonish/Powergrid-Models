@@ -89,8 +89,8 @@ public class DistLinesSpacingZ extends DistLineSegment {
 			len = Double.parseDouble (soln.get("?len").toString());
 			basev = Double.parseDouble (soln.get("?basev").toString());
 			spacing = soln.get("?spacing").toString();
-			wname = soln.get("?wname").toString();
-			wclass = soln.get("?wclass").toString();
+			//wname = soln.get("?wname").toString();
+			//wclass = soln.get("?wclass").toString();
 			nwires = 0;
 			phases = OptionalString (soln, "?phases", "");
 			if (phases.length() > 0) {
@@ -129,11 +129,15 @@ public class DistLinesSpacingZ extends DistLineSegment {
 
 	public String GetGLM() {
 		StringBuilder buf = new StringBuilder ();
-		if (wclass.equals("OverheadWireInfo")) {
+
+		//EJL 3/22/2019 - wclass isnt populated,
+		/*if (wclass.equals("OverheadWireInfo")) {
 			bCable = false;
 		} else {
 			bCable = true;
-		}
+		}*/
+
+		bCable = !wire_classes[0].equals("OverheadWireInfo"); //assume there's at least 1 wireclass
 		AppendSharedGLMAttributes(buf, glm_config, true);
 		return buf.toString();
 	}
