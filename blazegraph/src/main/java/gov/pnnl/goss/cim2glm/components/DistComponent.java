@@ -4,7 +4,8 @@ package gov.pnnl.goss.cim2glm.components;
 //	All rights reserved.
 //	----------------------------------------------------------
 
-import org.apache.jena.query.*; 
+import org.apache.commons.lang.StringUtils;
+import org.apache.jena.query.*;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.commons.math3.complex.Complex;
 import java.text.DecimalFormat;
@@ -107,6 +108,11 @@ public abstract class DistComponent {
  		s = s.replace ('}', '_');
  		s = s.replace ('(', '_');
  		s = s.replace (')', '_');
+
+ 		//EJL 3/27/19: Gridlab-D will throw an error if an object name begins with a character
+		if(StringUtils.isNumeric(StringUtils.substring(s,0,1)))
+			s = "_" + s;
+
  		return s;
  	}
 
