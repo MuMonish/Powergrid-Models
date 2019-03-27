@@ -1120,12 +1120,13 @@ public class CIMImporter extends Object {
 		for (HashMap.Entry<String,DistLinesSpacingZ> pair : mapLinesSpacingZ.entrySet()) {
 			out.print (pair.getValue().GetGLM());
 		}
-		for (HashMap.Entry<String,DistLinesCodeZ> pair : mapLinesCodeZ.entrySet()) {
-			out.print (pair.getValue().GetGLM());
-		}
-		for (HashMap.Entry<String,DistLinesInstanceZ> pair : mapLinesInstanceZ.entrySet()) {
-			out.print (pair.getValue().GetGLM());
-		}
+        //EJL 2/25/2019 - temp removed to filter duplicate line_configuration and overhead_line objects
+		//for (HashMap.Entry<String,DistLinesCodeZ> pair : mapLinesCodeZ.entrySet()) {
+		//	out.print (pair.getValue().GetGLM());
+		//}
+		//for (HashMap.Entry<String,DistLinesInstanceZ> pair : mapLinesInstanceZ.entrySet()) {
+		//	out.print (pair.getValue().GetGLM());
+		//}
 		for (HashMap.Entry<String,DistSwitch> pair : mapSwitches.entrySet()) {
 			DistSwitch obj = pair.getValue();
 			if (obj.glm_phases.contains ("S")) { // need to parent the nodes instead of writing a switch - TODO: this is hard-wired to PNNL taxonomy
