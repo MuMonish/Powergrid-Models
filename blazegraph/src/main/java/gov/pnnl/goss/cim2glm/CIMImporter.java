@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.List;
+import java.util.Arrays;
 
 import org.apache.jena.query.*;
 
@@ -780,6 +781,8 @@ public class CIMImporter extends Object {
 				break;
 			}
 		}
+		//sorting the wire phase array alphabetically (Edits by MuMonish)
+		Arrays.sort(ln.wire_phases);
 		for (int i = 0; i < ln.nwires; i++) {
 			if (ln.wire_phases[i].equals ("A")) {
 				match_A = GldLineConfig.GetMatchWire (ln.wire_classes[i], ln.wire_names[i]);
@@ -803,7 +806,6 @@ public class CIMImporter extends Object {
 			}
 		}
 		String match_SPC = buf.toString();
-
 		// search for an existing one
 		for (HashMap.Entry<String, GldLineConfig> pair: mapLineConfigs.entrySet()) {
 			GldLineConfig cfg = pair.getValue();
