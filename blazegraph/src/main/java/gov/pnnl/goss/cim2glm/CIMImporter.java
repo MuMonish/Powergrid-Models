@@ -532,6 +532,7 @@ public class CIMImporter extends Object {
 		LoadConcentricNeutralCables();
 		LoadCoordinates();
 		LoadDisconnectors();
+		LoadJumpers();
 		LoadFuses();
 		LoadLinesCodeZ();
 		LoadLinesInstanceZ();
@@ -640,6 +641,7 @@ public class CIMImporter extends Object {
 		WriteMapDictionary (mapBreakers, "breakers", false, out);
 		WriteMapDictionary (mapReclosers, "reclosers", false, out);
 		WriteMapDictionary (mapDisconnectors, "disconnectors", false, out);
+		WriteMapDictionary (mapJumpers, "jumpers", false, out);
 		WriteMapDictionary (mapMeasurements, "measurements", true, out, maxMeasurements);
 		out.println("}]}");
 		out.close();
@@ -725,6 +727,7 @@ public class CIMImporter extends Object {
 		WriteMapSymbols (mapReclosers, "reclosers", false, out);
 		WriteMapSymbols (mapSectionalisers, "sectionalisers", false, out);
 		WriteMapSymbols (mapDisconnectors, "disconnectors", false, out);
+		WriteMapSymbols (mapJumpers, "jumpers", false, out);
 
 		out.println("\"transformers\":[");
 		count = 1;
@@ -847,6 +850,7 @@ public class CIMImporter extends Object {
 		mapSwitches.putAll (mapReclosers);
 		mapSwitches.putAll (mapSectionalisers);
 		mapSwitches.putAll (mapDisconnectors);
+		mapSwitches.putAll (mapJumpers);
 
 		// preparatory steps to build the list of nodes
 		ResultSet results = queryHandler.query (

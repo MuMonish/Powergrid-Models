@@ -19,7 +19,7 @@ public abstract class DistSwitch extends DistComponent {
 		" ?s c:ConductingEquipment.BaseVoltage ?bv."+
 		" ?bv c:BaseVoltage.nominalVoltage ?basev."+
 		" ?s c:Switch.normalOpen ?open."+
-		" ?s c:Switch.ratedCurrent ?rated."+
+		" OPTIONAL {?s c:Switch.ratedCurrent ?rated.}"+
 		" OPTIONAL {?s c:ProtectedSwitch.breakingCapacity ?breaking.}"+
 		" ?t1 c:Terminal.ConductingEquipment ?s."+
 		" ?t1 c:Terminal.ConnectivityNode ?cn1."+
@@ -76,7 +76,13 @@ public abstract class DistSwitch extends DistComponent {
 			name = SafeName (soln.get("?name").toString());
 			id = soln.get("?id").toString();
 			basev = Double.parseDouble (soln.get("?basev").toString());
-			rated = Double.parseDouble (soln.get("?rated").toString());
+			try {
+				rated = Double.parseDouble(soln.get("?rated").toString());
+			} catch (Exception e) {
+				double rated;
+				rated = 500.0;
+			}
+
 			breaking = OptionalDouble (soln, "?breaking", 0.0);
 			bus1 = SafeName (soln.get("?bus1").toString()); 
 			bus2 = SafeName (soln.get("?bus2").toString()); 

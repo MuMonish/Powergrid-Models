@@ -17,6 +17,20 @@ public class DistDisconnector extends DistSwitch {
 	public String CIMClass() {
 		return "Disconnector";
 	}
+
+	public String GetGLM () {
+		StringBuilder buf = new StringBuilder ("object switch {\n");
+
+		buf.append ("  name \"discon_" + name + "\";\n");
+		buf.append ("  from \"" + bus1 + "\";\n");
+		buf.append ("  to \"" + bus2 + "\";\n");
+		buf.append ("  phases " + glm_phases + ";\n");
+		if (open) {
+			buf.append ("  status OPEN;\n");
+		} else {
+			buf.append ("  status CLOSED;\n");
+		}
+		buf.append("}\n");
+		return buf.toString();
+	}
 }
-
-
