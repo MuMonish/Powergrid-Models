@@ -12,6 +12,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.List;
 import java.util.Arrays;
+import java.util.Random;
 
 import org.apache.jena.query.*;
 
@@ -915,12 +916,7 @@ public class CIMImporter extends Object {
 				}
 			}
 		}
-		for (HashMap.Entry<String,DistLoad> pair : mapLoads.entrySet()) {
-			DistLoad obj = pair.getValue();
-			GldNode nd = mapNodes.get (obj.bus);
-			nd.nomvln = obj.basev / Math.sqrt(3.0);
-			nd.AccumulateLoads (obj.name, obj.phases, obj.p, obj.q, obj.pe, obj.qe, obj.pz, obj.pi, obj.pp, obj.qz, obj.qi, obj.qp, randomZIP);
-		}
+
 		for (HashMap.Entry<String,DistCapacitor> pair : mapCapacitors.entrySet()) {
 			DistCapacitor obj = pair.getValue();
 			GldNode nd = mapNodes.get (obj.bus);
@@ -996,11 +992,55 @@ public class CIMImporter extends Object {
 			}
 			GldNode nd1 = mapNodes.get (obj.bus1);
 			nd1.nomvln = obj.basev / Math.sqrt(3.0);
-			nd1.AddPhases (obj.phases);
 			GldNode nd2 = mapNodes.get (obj.bus2);
 			nd2.nomvln = nd1.nomvln;
-			nd2.AddPhases (obj.phases);
+			//nd1.AddPhases (obj.phases);
+			//nd2.AddPhases (obj.phases);
+			// Edits to get phasing information in GridLAB-D ## MuMonish##
+			if (obj.phases.contains("s")) {  // add primary phase to this triplex
+				nd1.bSecondary = true;
+				nd2.bSecondary = true;
+				if (nd2.phases.length() > 0) {
+					nd1.AddPhases (nd2.phases);
+					obj.phases = obj.phases + ":" + nd2.phases;
+				} else if (nd1.phases.length() > 0) {
+					if (nd1.phases.length() >1){ // if primary of triplex line has multiple phases ## MuMonish##
+						int ran = 1 + (int)(Math.random() * nd1.phases.length()); //The model is incorrect, temporary fix ## MuMonish##
+						nd2.AddPhases (nd1.phases.substring(ran-1,ran));// Randomly alloting one phase ## MuMonish##
+						obj.phases = obj.phases + ":" + nd1.phases.substring(ran-1,ran);
+					} else {
+						nd2.AddPhases(nd1.phases);
+						obj.phases = obj.phases + ":" + nd1.phases;
+					}
+				}
+				DistCoordinates pt1 = mapCoordinates.get("ACLineSegment:" + obj.name + ":1");
+				DistCoordinates pt2 = mapCoordinates.get("ACLineSegment:" + obj.name + ":2");
+				if (pt1.x == 0.0 && pt1.y == 0.0) {
+					if (pt2.x != 0.0 || pt2.y != 0.0) {
+						pt1.x = pt2.x + 3.0;
+						pt1.y = pt2.y + 0.0;
+					}
+				} else if (pt2.x == 0.0 && pt2.y == 0.0) {
+					if (pt1.x != 0.0 || pt1.y != 0.0) {
+						pt2.x = pt1.x + 3.0;
+						pt2.y = pt1.y + 0.0;
+					}
+				}
+			} else {
+				nd1.AddPhases (obj.phases);
+				nd2.AddPhases (obj.phases);
+			}
 		}
+
+		for (HashMap.Entry<String,DistLoad> pair : mapLoads.entrySet()) {
+			DistLoad obj = pair.getValue();
+			GldNode nd = mapNodes.get (obj.bus);
+			nd.nomvln = obj.basev / Math.sqrt(3.0);
+			obj.phases = nd.phases; // Consistent phasing of Triplex node and its parent  ## MuMonish##
+			nd.AccumulateLoads (obj.name, obj.phases, obj.p, obj.q, obj.pe, obj.qe, obj.pz, obj.pi, obj.pp, obj.qz, obj.qi, obj.qp, randomZIP);
+			obj.phases = nd.phases;
+		}
+
 		for (HashMap.Entry<String,DistSwitch> pair : mapSwitches.entrySet()) {
 			DistSwitch obj = pair.getValue();
 			GldNode nd1 = mapNodes.get (obj.bus1);

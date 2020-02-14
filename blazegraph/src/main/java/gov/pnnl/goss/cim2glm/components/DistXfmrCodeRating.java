@@ -164,18 +164,20 @@ public class DistXfmrCodeRating extends DistComponent {
 				buf.append ("  powerA_rating " + sKVA + ";\n");
 				buf.append ("  powerB_rating 0.0;\n");
 				buf.append ("  powerC_rating 0.0;\n");
+				sConnect = "WYE_WYE";
 			} else if (tname.contains ("_bn_")) {
 				buf.append ("  powerA_rating 0.0;\n");
 				buf.append ("  powerB_rating " + sKVA + ";\n");
 				buf.append ("  powerC_rating 0.0;\n");
+				sConnect = "WYE_WYE";
 			} else if (tname.contains ("_cn_")) {
 				buf.append ("  powerA_rating 0.0;\n");
 				buf.append ("  powerB_rating 0.0;\n");
 				buf.append ("  powerC_rating " + sKVA + ";\n");
+				sConnect = "WYE_WYE";
 			}
 			buf.append ("  primary_voltage " + df3.format (ratedU[0] * Math.sqrt(3.0)) + ";\n");
 			buf.append ("  secondary_voltage " + df3.format (ratedU[1] * Math.sqrt(3.0)) + ";\n");
-			sConnect = "WYE_WYE";
 		} else {
 			buf.append ("  primary_voltage " + df3.format (ratedU[0] / Math.sqrt(3.0)) + ";\n");
 			buf.append ("  secondary_voltage " + df3.format (ratedU[1] / Math.sqrt(3.0)) + ";\n");

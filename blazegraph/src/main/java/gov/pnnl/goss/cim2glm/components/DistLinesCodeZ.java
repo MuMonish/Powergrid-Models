@@ -18,6 +18,7 @@ public class DistLinesCodeZ extends DistLineSegment {
 		" ?s c:Conductor.length ?len."+
 		" ?s c:ACLineSegment.PerLengthImpedance ?lcode."+
 		" ?lcode c:IdentifiedObject.name ?lname."+
+		" bind(strafter(str(?lcode),\"#\") as ?codeid)."+
 		" ?t1 c:Terminal.ConductingEquipment ?s."+
 		" ?t1 c:Terminal.ConnectivityNode ?cn1."+
 		" ?t1 c:ACDCTerminal.sequenceNumber \"1\"."+

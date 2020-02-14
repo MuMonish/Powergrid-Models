@@ -151,7 +151,11 @@ public class DistXfmrTank extends DistComponent {
 		buf.append ("  from \"" + bus[0] + "\";\n");
 		buf.append ("  to \"" + bus[1] + "\";\n");
 		if (phs[1].contains("s")) {
-			buf.append("  phases " + phs[0] + "S;\n");
+			if (phs[0].contains("N")){ // Edits to remove "N" for service transformers ## MuMonish##
+				buf.append("  phases " + phs[0].replace("N","") + "S;\n");
+			} else {
+				buf.append("  phases " + phs[0] + "S;\n");
+			}
 		} else {
 			buf.append("  phases " + phs[0] + ";\n");
 		}
