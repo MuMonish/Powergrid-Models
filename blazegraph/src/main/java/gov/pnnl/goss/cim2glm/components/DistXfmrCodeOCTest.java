@@ -24,6 +24,7 @@ public class DistXfmrCodeOCTest extends DistComponent {
 		" ?nlt c:NoLoadTest.excitingCurrent ?iexc."+
 		"} ORDER BY ?pname ?tname";
 
+
 	public String pname;
 	public String tname;
 	public double nll;

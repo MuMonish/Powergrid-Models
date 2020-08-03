@@ -21,6 +21,7 @@ public class DistLoad extends DistComponent {
 	 	" ?s c:EnergyConsumer.qfixed ?q."+
 	 	" ?s c:EnergyConsumer.phaseConnection ?connraw."+
 	 	" 			bind(strafter(str(?connraw),\"PhaseShuntConnectionKind.\") as ?conn)"+
+		"OPTIONAL {"+
 	 	" ?s c:EnergyConsumer.LoadResponse ?lr."+
 	 	" ?lr c:LoadResponseCharacteristic.pConstantImpedance ?pz."+
 	 	" ?lr c:LoadResponseCharacteristic.qConstantImpedance ?qz."+
@@ -30,6 +31,7 @@ public class DistLoad extends DistComponent {
 	 	" ?lr c:LoadResponseCharacteristic.qConstantPower ?qp."+
 	 	" ?lr c:LoadResponseCharacteristic.pVoltageExponent ?pe."+
 	 	" ?lr c:LoadResponseCharacteristic.qVoltageExponent ?qe."+
+		"} " +
 	 	" OPTIONAL {?ecp c:EnergyConsumerPhase.EnergyConsumer ?s."+
 	 	" ?ecp c:EnergyConsumerPhase.phase ?phsraw."+
 	 	" 			bind(strafter(str(?phsraw),\"SinglePhaseKind.\") as ?phs) }"+
@@ -82,15 +84,27 @@ public class DistLoad extends DistComponent {
 			conn = soln.get("?conn").toString();
 			p = 0.001 * Double.parseDouble (soln.get("?p").toString());
 			q = 0.001 * Double.parseDouble (soln.get("?q").toString());
-			pz = Double.parseDouble (soln.get("?pz").toString());
-			qz = Double.parseDouble (soln.get("?qz").toString());
-			pi = Double.parseDouble (soln.get("?pi").toString());
-			qi = Double.parseDouble (soln.get("?qi").toString());
-			pp = Double.parseDouble (soln.get("?pp").toString());
-			qp = Double.parseDouble (soln.get("?qp").toString());
-			pe = Double.parseDouble (soln.get("?pe").toString());
-			qe = Double.parseDouble (soln.get("?qe").toString());
-		}		
+			try {
+				pz = Double.parseDouble(soln.get("?pz").toString());
+				qz = Double.parseDouble(soln.get("?qz").toString());
+				pi = Double.parseDouble(soln.get("?pi").toString());
+				qi = Double.parseDouble(soln.get("?qi").toString());
+				pp = Double.parseDouble(soln.get("?pp").toString());
+				qp = Double.parseDouble(soln.get("?qp").toString());
+				pe = Double.parseDouble(soln.get("?pe").toString());
+				qe = Double.parseDouble(soln.get("?qe").toString());
+			}
+			catch(Exception e) {  // Edits MuMonish : Adding Constant Power Loads for no Load response charaacteristics //
+				pz = 0.0;
+				qz = 0.0;
+				pi = 0.0;
+				qi = 0.0;
+				pp = 100.0;
+				qp = 100.0;
+				pe = 0.0;
+				qe = 0.0;
+			}
+		}
 		dss_load_model = 8;
 //		System.out.println (DisplayString());
 	}

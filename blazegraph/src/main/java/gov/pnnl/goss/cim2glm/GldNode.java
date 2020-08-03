@@ -7,6 +7,9 @@ package gov.pnnl.goss.cim2glm;
 import java.text.DecimalFormat;
 import org.apache.commons.math3.complex.Complex;
 import java.util.Random;
+import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /** 
  Helper class to accumulate nodes and loads. 
@@ -44,7 +47,8 @@ public class GldNode {
 	/** root name of the node or meter, will have `nd_` prepended */
 	public final String name;
 	/** name of the load, if any, will have `ld_` prepended */
-	public String loadname;
+	//public String loadname;
+	public List<String> loadname; // Edits MuMonish : Initialize Array to add multiple loads on the same node //
 	/** ABC allowed */
 	public String phases;
 	/** this nominal voltage is always line-to-neutral */
@@ -75,16 +79,22 @@ public class GldNode {
 	public double qc_i;
 	/** real power on phase A or s1, constant power portion */
 	public double pa_p;
+	public List<Double> pa_p_list; // Edits MuMonish : Initialize Array to add multiple loads on the same node //
 	/** real power on phase B or s2, constant power portion */
 	public double pb_p;
+	public List<Double> pb_p_list; // Edits MuMonish : Initialize Array to add multiple loads on the same node //
 	/** real power on phase C, constant power portion */
 	public double pc_p;
+	public List<Double> pc_p_list; // Edits MuMonish : Initialize Array to add multiple loads on the same node //
 	/** reactive power on phase A or s1, constant power portion */
 	public double qa_p;
+	public List<Double> qa_p_list; // Edits MuMonish : Initialize Array to add multiple loads on the same node //
 	/** reactive power on phase B or s2, constant power portion */
 	public double qb_p;
+	public List<Double> qb_p_list; // Edits MuMonish : Initialize Array to add multiple loads on the same node //
 	/** reactive power on phase C, constant power portion */
 	public double qc_p;
+	public List<Double> qc_p_list; // Edits MuMonish : Initialize Array to add multiple loads on the same node //
 	/** will add N or D phasing, if not S */
 	public boolean bDelta;	
 	/** denotes the SWING bus, aka substation source bus */
@@ -114,10 +124,17 @@ public class GldNode {
 		this.name = name;
 		nomvln = -1.0;
 		phases = "";
-		loadname = "";
+		//loadname = "";
+		loadname = new ArrayList<String>(); // Edits MuMonish : Array to add multiple loads on the same node //
 		pa_z = pb_z = pc_z = qa_z = qb_z = qc_z = 0.0;
 		pa_i = pb_i = pc_i = qa_i = qb_i = qc_i = 0.0;
 		pa_p = pb_p = pc_p = qa_p = qb_p = qc_p = 0.0;
+		pa_p_list = new ArrayList<Double>(); // Edits MuMonish : Array to add multiple loads on the same node //
+		pb_p_list = new ArrayList<Double>(); // Edits MuMonish : Array to add multiple loads on the same node //
+		pc_p_list = new ArrayList<Double>(); // Edits MuMonish : Array to add multiple loads on the same node //
+		qa_p_list = new ArrayList<Double>(); // Edits MuMonish : Array to add multiple loads on the same node //
+		qb_p_list = new ArrayList<Double>(); // Edits MuMonish : Array to add multiple loads on the same node //
+		qc_p_list = new ArrayList<Double>(); // Edits MuMonish : Array to add multiple loads on the same node //
 		bDelta = false;
 		bSwing = false;
 		bSecondary = false;
@@ -157,23 +174,25 @@ public class GldNode {
 		return phases + "N";
 	}
 
+
 	/** Distributes a total load (pL+jqL) among the phases (phs) present on GridLAB-D node
 	@param phs phases actually present at the node 
 	@param pL total real power 
 	@param qL total reactive power 
 	@param Pv real power voltage exponent from a CIM LoadResponseCharacteristic 
-	@param Qv reactive power voltage exponent from a CIM LoadResponseCharacteristic 
-	@param Pz real power constant-impedance percentage from a CIM LoadResponseCharacteristic 
-	@param Qz reactive power constant-impedance percentage from a CIM LoadResponseCharacteristic 
-	@param Pi real power constant-current percentage from a CIM LoadResponseCharacteristic 
-	@param Qi reactive power constant-current percentage from a CIM LoadResponseCharacteristic 
-	@param Pp real power constant-power percentage from a CIM LoadResponseCharacteristic 
-	@param Qp reactive power constant-power percentage from a CIM LoadResponseCharacteristic 
-	@return void */ 
+	@param Qv reactive power voltage exponent from a CIM LoadResponseCharacteristic
+	@param Pz real power constant-impedance percentage from a CIM LoadResponseCharacteristic
+	@param Qz reactive power constant-impedance percentage from a CIM LoadResponseCharacteristic
+	@param Pi real power constant-current percentage from a CIM LoadResponseCharacteristic
+	@param Qi reactive power constant-current percentage from a CIM LoadResponseCharacteristic
+	@param Pp real power constant-power percentage from a CIM LoadResponseCharacteristic
+	@param Qp reactive power constant-power percentage from a CIM LoadResponseCharacteristic
+	@return void */
 	public void AccumulateLoads (String ldname, String phs, double pL, double qL, double Pv, double Qv,
 															 double Pz, double Pi, double Pp, double Qz, double Qi, double Qp, boolean randomZIP) {
 		double fa = 0.0, fb = 0.0, fc = 0.0, denom = 0.0;
-		loadname = "ld_" + ldname;
+		//loadname = "ld_" + ldname;
+		loadname.add("ld_" + ldname); // Edits MuMonish : Add multiple loads on the same node //
 		if (phs.contains("A") || phs.contains("s")) {
 			fa = 1.0;
 			denom += 1.0;
@@ -264,6 +283,12 @@ public class GldNode {
 		qa_p += fa * qL * fqp;
 		qb_p += fb * qL * fqp;
 		qc_p += fc * qL * fqp;
+		pa_p_list.add(fa * pL * fpp);// Edits MuMonish : Add multiple loads on the same node //
+		pb_p_list.add(fb * pL * fpp);// Edits MuMonish : Add multiple loads on the same node //
+		pc_p_list.add(fc * pL * fpp);// Edits MuMonish : Add multiple loads on the same node //
+		qa_p_list.add(fa * qL * fqp);// Edits MuMonish : Add multiple loads on the same node //
+		qb_p_list.add(fb * qL * fqp);// Edits MuMonish : Add multiple loads on the same node //
+		qc_p_list.add(fc * qL * fqp);// Edits MuMonish : Add multiple loads on the same node //
 	}
 
 	/** reapportion loads according to constant power (Z/sum), constant current (I/sum) and constant power (P/sum)
@@ -430,144 +455,155 @@ public class GldNode {
 				AppendSubMeter (buf, "meter", "_dgmtr");
 			}
 		}
-		if (!bSwing && HasLoad()) {
-			RescaleLoad(load_scale);
-			if (bWantZIP) {
-				ApplyZIP (Zcoeff, Icoeff, Pcoeff);
-			}			
-			Complex va = new Complex (nomvln);
-			Complex vb = va.multiply (neg120);
-			Complex vc = va.multiply (pos120);
-			Complex amps;
-			Complex vmagsq = new Complex (nomvln * nomvln);
-			if (bSecondary) {
-				if (useHouses) {  // houses will be grandchildren of this, but triplex loads and primary loads cannot be grandchildren
-					buf.append ("object triplex_meter {\n");
-					buf.append ("  name \"" + loadname + "_ldmtr\";\n");
-					buf.append ("  parent \"" + name + "\";\n");
-					buf.append ("  phases " + GetPhases() + ";\n");
-					buf.append ("  nominal_voltage " + df2.format(nomvln) + ";\n");
-					buf.append ("}\n");
-				} else {
-					buf.append ("object triplex_load {\n");
-					buf.append ("  name \"" + loadname + "\";\n");
-					buf.append ("  parent \"" + name + "\";\n");
-					buf.append ("  phases " + GetPhases() + ";\n");
-					buf.append ("  nominal_voltage " + df2.format(nomvln) + ";\n");
-					Complex base1 = new Complex (pa_z + pa_i + pa_p, qa_z + qa_i + qa_p);
-					Complex base2 = new Complex (pb_z + pb_i + pb_p, qb_z + qb_i + qb_p);
-					boolean b12 = false;
-					if (base1.abs() > 0.0 && base2.abs() == 0.0) {
-						b12 = true;
-					}
-					if (bWantSched) {
-						if (b12) {
-							buf.append ("  base_power_12 " + fSched + ".value*" + df2.format(base1.abs()) + ";\n");
-						} else {
-							buf.append ("  base_power_1 " + fSched + ".value*" + df2.format(base1.abs()) + ";\n");
-							buf.append ("  base_power_2 " + fSched + ".value*" + df2.format(base2.abs()) + ";\n");
-						}
+		//if (!bSwing && HasLoad()) {
+		if (!bSwing) {
+			// Edits MuMonish: adding loads for each node from the stored array //
+			for (int i = 0; i < loadname.size(); i++) {
+				// System.out.println(loadname.get(i)); //Edits MuMonish : Printing out for debug //
+				pa_p = pa_p_list.get(i); // Edits MuMonish: adding loads for each node from the stored array //
+				pb_p = pb_p_list.get(i); // Edits MuMonish: adding loads for each node from the stored array //
+				pc_p = pc_p_list.get(i); // Edits MuMonish: adding loads for each node from the stored array //
+				qa_p = qa_p_list.get(i); // Edits MuMonish: adding loads for each node from the stored array //
+				qb_p = qb_p_list.get(i); // Edits MuMonish: adding loads for each node from the stored array //
+				qc_p = qc_p_list.get(i); // Edits MuMonish: adding loads for each node from the stored array //
+				RescaleLoad(load_scale);
+				if (bWantZIP) {
+					ApplyZIP(Zcoeff, Icoeff, Pcoeff);
+				}
+				Complex va = new Complex(nomvln);
+				Complex vb = va.multiply(neg120);
+				Complex vc = va.multiply(pos120);
+				Complex amps;
+				Complex vmagsq = new Complex(nomvln * nomvln);
+				if (bSecondary) {
+					if (useHouses) {  // houses will be grandchildren of this, but triplex loads and primary loads cannot be grandchildren
+						buf.append("object triplex_meter {\n");
+						buf.append("  name \"" + loadname.get(i) + "_ldmtr\";\n");
+						buf.append("  parent \"" + name + "\";\n");
+						buf.append("  phases " + GetPhases() + ";\n");
+						buf.append("  nominal_voltage " + df2.format(nomvln) + ";\n");
+						buf.append("}\n");
 					} else {
-						if (b12) {
-							buf.append ("  base_power_12 " + df2.format(base1.abs()) + ";\n");
-						} else {
-							buf.append ("  base_power_1 " + df2.format(base1.abs()) + ";\n");
-							buf.append ("  base_power_2 " + df2.format(base2.abs()) + ";\n");
+						buf.append("object triplex_load {\n");
+						buf.append("  name \"" + loadname.get(i) + "\";\n");
+						buf.append("  parent \"" + name + "\";\n");
+						buf.append("  phases " + GetPhases() + ";\n");
+						buf.append("  nominal_voltage " + df2.format(nomvln) + ";\n");
+						Complex base1 = new Complex(pa_z + pa_i + pa_p, qa_z + qa_i + qa_p);
+						Complex base2 = new Complex(pb_z + pb_i + pb_p, qb_z + qb_i + qb_p);
+						boolean b12 = false;
+						if (base1.abs() > 0.0 && base2.abs() == 0.0) {
+							b12 = true;
 						}
-					}
-					if (pa_p != 0.0) {
-						Complex base = new Complex(pa_p, qa_p);
-						if (b12) {
-							buf.append ("  power_pf_12 " + df2.format(pa_p / base.abs()) + ";\n");
-							buf.append ("  power_fraction_12 " + df2.format(pa_p / base1.getReal()) + ";\n");
+						if (bWantSched) {
+							if (b12) {
+								buf.append("  base_power_12 " + fSched + ".value*" + df2.format(base1.abs()) + ";\n");
+							} else {
+								buf.append("  base_power_1 " + fSched + ".value*" + df2.format(base1.abs()) + ";\n");
+								buf.append("  base_power_2 " + fSched + ".value*" + df2.format(base2.abs()) + ";\n");
+							}
 						} else {
-							buf.append ("  power_pf_1 " + df2.format(pa_p / base.abs()) + ";\n");
-							buf.append ("  power_fraction_1 " + df2.format(pa_p / base1.getReal()) + ";\n");
+							if (b12) {
+								buf.append("  base_power_12 " + df2.format(base1.abs()) + ";\n");
+							} else {
+								buf.append("  base_power_1 " + df2.format(base1.abs()) + ";\n");
+								buf.append("  base_power_2 " + df2.format(base2.abs()) + ";\n");
+							}
 						}
-					}
-					if (pb_p != 0.0) {
-						Complex base = new Complex(pb_p, qb_p);
-						buf.append ("  power_pf_2 " + df2.format(pb_p / base.abs()) + ";\n");
-						buf.append ("  power_fraction_2 " + df2.format(pb_p / base2.getReal()) + ";\n");
-					}
-					if (pa_i != 0.0) {
-						Complex base = new Complex(pa_i, qa_i);
-						if (b12) {
-							buf.append ("  current_pf_12 " + df2.format(pa_i / base.abs()) + ";\n");
-							buf.append ("  current_fraction_12 " + df2.format(pa_i / base1.getReal()) + ";\n");
-						} else {
-							buf.append ("  current_pf_1 " + df2.format(pa_i / base.abs()) + ";\n");
-							buf.append ("  current_fraction_1 " + df2.format(pa_i / base1.getReal()) + ";\n");
+						if (pa_p != 0.0) {
+							Complex base = new Complex(pa_p, qa_p);
+							if (b12) {
+								buf.append("  power_pf_12 " + df2.format(pa_p / base.abs()) + ";\n");
+								buf.append("  power_fraction_12 " + df2.format(pa_p / base1.getReal()) + ";\n");
+							} else {
+								buf.append("  power_pf_1 " + df2.format(pa_p / base.abs()) + ";\n");
+								buf.append("  power_fraction_1 " + df2.format(pa_p / base1.getReal()) + ";\n");
+							}
 						}
-					}
-					if (pb_i != 0.0) {
-						Complex base = new Complex(pb_i, qb_i);
-						buf.append ("  current_pf_2 " + df2.format(pb_i / base.abs()) + ";\n");
-						buf.append ("  current_fraction_2 " + df2.format(pb_i / base2.getReal()) + ";\n");
-					}
-					if (pa_z != 0.0) {
-						Complex base = new Complex(pa_z, qa_z);
-						if (b12) {
-							buf.append ("  impedance_pf_12 " + df2.format(pa_z / base.abs()) + ";\n");
-							buf.append ("  impedance_fraction_12 " + df2.format(pa_z / base1.getReal()) + ";\n");
-						} else {
-							buf.append ("  impedance_pf_1 " + df2.format(pa_z / base.abs()) + ";\n");
-							buf.append ("  impedance_fraction_1 " + df2.format(pa_z / base1.getReal()) + ";\n");
+						if (pb_p != 0.0) {
+							Complex base = new Complex(pb_p, qb_p);
+							buf.append("  power_pf_2 " + df2.format(pb_p / base.abs()) + ";\n");
+							buf.append("  power_fraction_2 " + df2.format(pb_p / base2.getReal()) + ";\n");
 						}
+						if (pa_i != 0.0) {
+							Complex base = new Complex(pa_i, qa_i);
+							if (b12) {
+								buf.append("  current_pf_12 " + df2.format(pa_i / base.abs()) + ";\n");
+								buf.append("  current_fraction_12 " + df2.format(pa_i / base1.getReal()) + ";\n");
+							} else {
+								buf.append("  current_pf_1 " + df2.format(pa_i / base.abs()) + ";\n");
+								buf.append("  current_fraction_1 " + df2.format(pa_i / base1.getReal()) + ";\n");
+							}
+						}
+						if (pb_i != 0.0) {
+							Complex base = new Complex(pb_i, qb_i);
+							buf.append("  current_pf_2 " + df2.format(pb_i / base.abs()) + ";\n");
+							buf.append("  current_fraction_2 " + df2.format(pb_i / base2.getReal()) + ";\n");
+						}
+						if (pa_z != 0.0) {
+							Complex base = new Complex(pa_z, qa_z);
+							if (b12) {
+								buf.append("  impedance_pf_12 " + df2.format(pa_z / base.abs()) + ";\n");
+								buf.append("  impedance_fraction_12 " + df2.format(pa_z / base1.getReal()) + ";\n");
+							} else {
+								buf.append("  impedance_pf_1 " + df2.format(pa_z / base.abs()) + ";\n");
+								buf.append("  impedance_fraction_1 " + df2.format(pa_z / base1.getReal()) + ";\n");
+							}
+						}
+						if (pb_z != 0.0) {
+							Complex base = new Complex(pb_z, qb_z);
+							buf.append("  impedance_pf_2 " + df2.format(pb_z / base.abs()) + ";\n");
+							buf.append("  impedance_fraction_2 " + df2.format(pb_z / base2.getReal()) + ";\n");
+						}
+						buf.append("}\n");
 					}
-					if (pb_z != 0.0) {
-						Complex base = new Complex(pb_z, qb_z);
-						buf.append ("  impedance_pf_2 " + df2.format(pb_z / base.abs()) + ";\n");
-						buf.append ("  impedance_fraction_2 " + df2.format(pb_z / base2.getReal()) + ";\n");
+				} else {
+					buf.append("object load {\n");
+					buf.append("  name \"" + loadname.get(i) + "\";\n");
+					buf.append("  parent \"" + name + "\";\n");
+					buf.append("  phases " + GetPhases() + ";\n");
+					buf.append("  nominal_voltage " + df2.format(nomvln) + ";\n");
+					if (pa_p != 0.0 || qa_p != 0.0) {
+						buf.append("  constant_power_A " + CFormat(new Complex(pa_p, qa_p)) + ";\n");
 					}
-					buf.append ("}\n");
+					if (pb_p != 0.0 || qb_p != 0.0) {
+						buf.append("  constant_power_B " + CFormat(new Complex(pb_p, qb_p)) + ";\n");
+					}
+					if (pc_p != 0.0 || qc_p != 0.0) {
+						buf.append("  constant_power_C " + CFormat(new Complex(pc_p, qc_p)) + ";\n");
+					}
+					if (pa_z != 0.0 || qa_z != 0.0) {
+						Complex s = new Complex(pa_z, qa_z);
+						Complex z = vmagsq.divide(s.conjugate());
+						buf.append("  constant_impedance_A " + CFormat(z) + ";\n");
+					}
+					if (pb_z != 0.0 || qb_z != 0.0) {
+						Complex s = new Complex(pb_z, qb_z);
+						Complex z = vmagsq.divide(s.conjugate());
+						buf.append("  constant_impedance_B " + CFormat(z) + ";\n");
+					}
+					if (pc_z != 0.0 || qc_z != 0.0) {
+						Complex s = new Complex(pc_z, qc_z);
+						Complex z = vmagsq.divide(s.conjugate());
+						buf.append("  constant_impedance_C " + CFormat(z) + ";\n");
+					}
+					if (pa_i != 0.0 || qa_i != 0.0) {
+						Complex s = new Complex(pa_i, qa_i);
+						amps = s.divide(va).conjugate();
+						buf.append("  constant_current_A " + CFormat(amps) + ";\n");
+					}
+					if (pb_i != 0.0 || qb_i != 0.0) {
+						Complex s = new Complex(pb_i, qb_i);
+						amps = s.divide(va.multiply(neg120)).conjugate();
+						buf.append("  constant_current_B " + CFormat(amps) + ";\n");
+					}
+					if (pc_i != 0.0 || qc_i != 0.0) {
+						Complex s = new Complex(pc_i, qc_i);
+						amps = s.divide(va.multiply(pos120)).conjugate();
+						buf.append("  constant_current_C " + CFormat(amps) + ";\n");
+					}
+					buf.append("}\n");
 				}
-			} else {
-				buf.append ("object load {\n");
-				buf.append ("  name \"" + loadname + "\";\n");
-				buf.append ("  parent \"" + name + "\";\n");
-				buf.append ("  phases " + GetPhases() + ";\n");
-				buf.append ("  nominal_voltage " + df2.format(nomvln) + ";\n");
-				if (pa_p != 0.0 || qa_p != 0.0)	{
-					buf.append ("  constant_power_A " + CFormat(new Complex(pa_p, qa_p)) + ";\n");
-				}
-				if (pb_p != 0.0 || qb_p != 0.0)	{
-					buf.append ("  constant_power_B " + CFormat(new Complex(pb_p, qb_p)) + ";\n");
-				}
-				if (pc_p != 0.0 || qc_p != 0.0)	{
-					buf.append ("  constant_power_C " + CFormat(new Complex(pc_p, qc_p)) + ";\n");
-				}
-				if (pa_z != 0.0 || qa_z != 0.0) {
-					Complex s = new Complex(pa_z, qa_z);
-					Complex z = vmagsq.divide(s.conjugate());
-					buf.append ("  constant_impedance_A " + CFormat(z) + ";\n");
-				}
-				if (pb_z != 0.0 || qb_z != 0.0) {
-					Complex s = new Complex(pb_z, qb_z);
-					Complex z = vmagsq.divide(s.conjugate());
-					buf.append ("  constant_impedance_B " + CFormat(z) + ";\n");
-				}
-				if (pc_z != 0.0 || qc_z != 0.0) {
-					Complex s = new Complex(pc_z, qc_z);
-					Complex z = vmagsq.divide(s.conjugate());
-					buf.append ("  constant_impedance_C " + CFormat(z) + ";\n");
-				}
-				if (pa_i != 0.0 || qa_i != 0.0) {
-					Complex s = new Complex(pa_i, qa_i);
-					amps = s.divide(va).conjugate();
-					buf.append ("  constant_current_A " + CFormat(amps) + ";\n");
-				}
-				if (pb_i != 0.0 || qb_i != 0.0) {
-					Complex s = new Complex(pb_i, qb_i);
-					amps = s.divide(va.multiply(neg120)).conjugate();
-					buf.append ("  constant_current_B " + CFormat(amps) + ";\n");
-				}
-				if (pc_i != 0.0 || qc_i != 0.0) {
-					Complex s = new Complex(pc_i, qc_i);
-					amps = s.divide(va.multiply(pos120)).conjugate();
-					buf.append ("  constant_current_C " + CFormat(amps) + ";\n");
-				}
-				buf.append ("}\n");
 			}
 		}
 		return buf.toString();

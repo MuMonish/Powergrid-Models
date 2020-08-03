@@ -1035,6 +1035,7 @@ public class CIMImporter extends Object {
 		for (HashMap.Entry<String,DistLoad> pair : mapLoads.entrySet()) {
 			DistLoad obj = pair.getValue();
 			GldNode nd = mapNodes.get (obj.bus);
+			// System.out.println(nd.name + " " + obj.name); //Edits MuMonish : Printing out for debug //
 			nd.nomvln = obj.basev / Math.sqrt(3.0);
 			obj.phases = nd.phases; // Consistent phasing of Triplex node and its parent  ## MuMonish##
 			nd.AccumulateLoads (obj.name, obj.phases, obj.p, obj.q, obj.pe, obj.qe, obj.pz, obj.pi, obj.pp, obj.qz, obj.qi, obj.qp, randomZIP);
@@ -1219,7 +1220,10 @@ public class CIMImporter extends Object {
 		for (HashMap.Entry<String,DistMeasurement> pair : mapMeasurements.entrySet()) {
 			DistMeasurement obj = pair.getValue();
 			GldNode nd = mapNodes.get (obj.bus);
-			obj.FindSimObject (nd.loadname, nd.phases, nd.bStorageInverters, nd.bSolarInverters, nd.bSyncMachines);
+			// obj.FindSimObject (nd.loadname, nd.phases, nd.bStorageInverters, nd.bSolarInverters, nd.bSyncMachines);
+			for (int i = 0; i < nd.loadname.size(); i++) { // Edits MuMonish: adding loads for each node from the stored array //
+				obj.FindSimObject(nd.loadname.get(i), nd.phases, nd.bStorageInverters, nd.bSolarInverters, nd.bSyncMachines);
+			}
 		}
 
 		out.close();
