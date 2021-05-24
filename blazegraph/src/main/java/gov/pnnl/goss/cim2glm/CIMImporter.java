@@ -1801,7 +1801,18 @@ public class CIMImporter extends Object {
 			}
 			new CIMImporter().start(qh, fTarget, fRoot, fSched, load_scale,
 															bWantSched, bWantZIP, randomZIP, useHouses, Zcoeff, Icoeff, Pcoeff);
-		} catch (RuntimeException e) {
+			System.out.println ("Sucessfully produced a model ");
+
+			String classpath = System.getProperty("java.class.path");
+			String[] classpathEntries = classpath.split(File.pathSeparator);
+			String python_dir = classpathEntries[0].split("blazegraph")[0] + "Clean_glm" + System.getProperty("file.separator") + "post_processing_glm_v3.py ";
+			String command = "python " + "\"" + python_dir + "\"";
+			String param = " " + fRoot + " " + "\"" +System.getProperty("user.dir") + "\"" ;
+			Process p = Runtime.getRuntime().exec(command + param) ;
+			System.out.println ("Sucessfully cleaned the model ");
+
+//		} catch (RuntimeException e) {   ## MuMonish for adding the python cleaning script
+		} catch (IOException  e) {
 			System.out.println ("Can not produce a model: " + e.getMessage());
 			e.printStackTrace();
 		}

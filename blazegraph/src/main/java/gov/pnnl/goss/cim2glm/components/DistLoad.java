@@ -21,7 +21,6 @@ public class DistLoad extends DistComponent {
 	 	" ?s c:EnergyConsumer.qfixed ?q."+
 	 	" ?s c:EnergyConsumer.phaseConnection ?connraw."+
 	 	" 			bind(strafter(str(?connraw),\"PhaseShuntConnectionKind.\") as ?conn)"+
-		"OPTIONAL {"+
 	 	" ?s c:EnergyConsumer.LoadResponse ?lr."+
 	 	" ?lr c:LoadResponseCharacteristic.pConstantImpedance ?pz."+
 	 	" ?lr c:LoadResponseCharacteristic.qConstantImpedance ?qz."+
@@ -31,7 +30,6 @@ public class DistLoad extends DistComponent {
 	 	" ?lr c:LoadResponseCharacteristic.qConstantPower ?qp."+
 	 	" ?lr c:LoadResponseCharacteristic.pVoltageExponent ?pe."+
 	 	" ?lr c:LoadResponseCharacteristic.qVoltageExponent ?qe."+
-		"} " +
 	 	" OPTIONAL {?ecp c:EnergyConsumerPhase.EnergyConsumer ?s."+
 	 	" ?ecp c:EnergyConsumerPhase.phase ?phsraw."+
 	 	" 			bind(strafter(str(?phsraw),\"SinglePhaseKind.\") as ?phs) }"+

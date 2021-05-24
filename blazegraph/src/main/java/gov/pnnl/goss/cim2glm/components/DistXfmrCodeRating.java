@@ -157,7 +157,8 @@ public class DistXfmrCodeRating extends DistComponent {
 				buf.append ("  powerB_rating 0.0;\n");
 				buf.append ("  powerC_rating " + sKVA + ";\n");
 			}
-			buf.append ("  primary_voltage " + df3.format (ratedU[0]) + ";\n");
+			//buf.append ("  primary_voltage " + df3.format (ratedU[0]) + ";\n");
+			buf.append ("  primary_voltage " + df3.format (ratedU[0] / Math.sqrt(3.0)) + ";\n");// Edits MuMonish : Secondary Voltage Consistency //
 			buf.append ("  secondary_voltage " + df3.format (ratedU[1]) + ";\n");
 		} else if (sConnect.equals("SINGLE_PHASE")) {
 			if (tname.contains ("_an_")) { // TODO - this is hard-wired to PNNL taxonomy feeder import
@@ -180,7 +181,8 @@ public class DistXfmrCodeRating extends DistComponent {
 			buf.append ("  secondary_voltage " + df3.format (ratedU[1] * Math.sqrt(3.0)) + ";\n");
 		} else {
 			buf.append ("  primary_voltage " + df3.format (ratedU[0] / Math.sqrt(3.0)) + ";\n");
-			buf.append ("  secondary_voltage " + df3.format (ratedU[1] / Math.sqrt(3.0)) + ";\n");
+			//buf.append ("  secondary_voltage " + df3.format (ratedU[1] / Math.sqrt(3.0)) + ";\n");
+			buf.append ("  secondary_voltage " + df3.format (ratedU[1]) + ";\n");// Edits MuMonish : Secondary Voltage Consistency //
 		}
 		if (sConnect.equals ("Y_D")) {
 			buf.append("  connect_type WYE_WYE; // should be Y_D\n");
