@@ -11,7 +11,7 @@ import numpy as np
 
 def createJson(feeder_name, dir_for_symbols, model,clock,directives,modules,classes): 
 
-    symbols_dir = dir_for_symbols
+    symbols_dir = dir_for_symbols + '_symbols.json'
     
     lp = open(symbols_dir).read()
     lp = lp[:11]+'{' +lp[12:]
@@ -59,6 +59,7 @@ def createJson(feeder_name, dir_for_symbols, model,clock,directives,modules,clas
  
     ################## feeder nodes, triplex_node and  substation #############
     node_models = ['node', 'triplex_node','substation']
+    nodes_not_found = []; tpx_nodes_not_found = []
     link_models_from_json = list(symbols['feeders'].keys())
     link_models_from_json.remove('swing_nodes')
     link_models_from_json.remove('capacitors')
@@ -101,15 +102,20 @@ def createJson(feeder_name, dir_for_symbols, model,clock,directives,modules,clas
                     
              
             if flag == 0:
+                msg = 'Phase mismatch in nodes'
                 print ('Couldnt find a match for {} {} having phase {}'.format(node, node_models[it], model[node_models[it]][node]['phases']))
-            
+                if node_models[it] == 'node':
+                    nodes_not_found.append(node)
+                elif node_models[it] == 'triplex_node':
+                   tpx_nodes_not_found.append(node)
+    
     #################   Printing to Json  #####################
     Json_file = json.dumps(feeder, sort_keys=True, indent=4, separators=(',', ': '))    
-    fp = open(feeder_name + '_networkx.json', 'w')
+    fp = open(dir_for_symbols + '_networkx.json', 'w')
     print(Json_file, file=fp)
     fp.close()
     
-    return feeder
+    return feeder, nodes_not_found, tpx_nodes_not_found
     
                  
                 

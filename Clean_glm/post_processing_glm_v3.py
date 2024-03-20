@@ -35,14 +35,14 @@ def clean_raw_glm(feeder_name, wrk_dir):
     # feeder_name = '3HT12F1'
     #feeder_name = '3HT12F5'
     dir_for_glm = glm_dir + '\\'+ feeder_name + '_base.glm'
-    dir_for_symbols = glm_dir + '\\'+ feeder_name + '_symbols.json'
+    dir_for_symbols = glm_dir + '\\'+ feeder_name
     
 ###############################################################################    
 ######################### Parsing GLM to Dictionary ###########################
 ###############################################################################    
     print(feeder_name)
-    print(wrk_dir)
     print(glm_dir)
+
     glm_lines = glmanip.read(dir_for_glm,glm_dir,buf=[])
     [model,clock,directives,modules,classes] = glmanip.parse(glm_lines)
 
@@ -50,7 +50,7 @@ def clean_raw_glm(feeder_name, wrk_dir):
 ######################### Parsing GLM Dict to Graph ###########################
 ############################################################################### 
     
-    feeder_network  = createJson(feeder_name, dir_for_symbols, model,clock,directives,modules,classes)
+    feeder_network, nodes_not_found, tpx_nodes_not_found  = createJson(feeder_name, dir_for_symbols, model,clock,directives,modules,classes)
     G = nx.readwrite.json_graph.node_link_graph(feeder_network)
      
 ###############################################################################    
@@ -141,26 +141,41 @@ def clean_raw_glm(feeder_name, wrk_dir):
 #        model['triplex_node'][tpx_node]['groupid'] = {}
 #        model['triplex_node'][tpx_node]['groupid'] = 'triplex_nodes'
         
-            
 ###############################################################################  
-####################### Checking Voltage Consistency ##########################       
+############## Deleting nodes that belong to network Grpah ####################    
+###############################################################################
+
+    node_model = model['node'].copy()
+    for node_id in node_model:
+        if node_id  in nodes_not_found: 
+            del model['node'][node_id]
+    
+    tpx_node_model = model['triplex_node'].copy()
+    for tpx_node_id in tpx_node_model:
+        if tpx_node_id  in tpx_nodes_not_found: 
+            del model['triplex_node'][tpx_node_id]
+          
+###############################################################################  
+############## Checking Voltage Consistency among Nodes #######################     
 ###############################################################################
     
-#    for trafo in model['transformer']:
-#        secondary_voltage = model['transformer'][trafo]['configuration'].split('/')[-1].split('V')[0]
-#        secondary_node = model['transformer'][trafo]['to']
-#        nodes = []
-#        if 'S' in  model['transformer'][trafo]['phases']:
-#            nodes_tpx = list(nx.dfs_postorder_nodes(G,secondary_node))
-#            #nodes.append(secondary_node)
-#            for nd_tpx in nodes_tpx:
-#                model['triplex_node'][nd_tpx]['nominal_voltage'] = secondary_voltage
-#        else:
-#            nodes = list(nx.dfs_postorder_nodes(G,secondary_node))
-#            for nd in nodes:
-#                model['node'][nd]['nominal_voltage'] = secondary_voltage
-#                
-#            
+    for trafo in model['transformer']:
+        secondary_voltage = model['transformer'][trafo]['configuration'].split('/')[-1].split('V')[0]
+        secondary_node = model['transformer'][trafo]['to']
+        nodes = []
+        if 'S' in  model['transformer'][trafo]['phases']:
+            nodes_tpx = list(nx.dfs_postorder_nodes(G,secondary_node))
+            #nodes.append(secondary_node)
+            for nd_tpx in nodes_tpx:
+                model['triplex_node'][nd_tpx]['nominal_voltage'] = secondary_voltage
+        else:
+            nodes = list(nx.dfs_postorder_nodes(G,secondary_node))
+            for nd in nodes:
+                model['node'][nd]['nominal_voltage'] = secondary_voltage
+
+###############################################################################  
+############## Checking Voltage Consistency among Loads #######################     
+###############################################################################           
     net_load = 0
     for loadid in model['load']:
         parentid = model['load'][loadid]['parent']
@@ -337,6 +352,10 @@ def clean_raw_glm(feeder_name, wrk_dir):
     return 
 
 if __name__ == '__main__':
-    # print(sys.argv[0])
-    clean_raw_glm(sys.argv[1], sys.argv[2]) 
+    # clean_raw_glm(sys.argv[1], sys.argv[2]) 
+    
+    if len(sys.argv)>1:
+        clean_raw_glm(sys.argv[1], sys.argv[2]) 
+    else:
+        clean_raw_glm('3HT12F7', 'E:\CIMTool\CIM_Importer_raw_files') 
     

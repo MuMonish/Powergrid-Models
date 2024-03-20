@@ -249,7 +249,7 @@ def Fixing_service_connection_inconsistency(model_triplex_line_dict, model_tripl
                 to_node = from_node 
             # Phase Consistency for the downstream triplex lines and nodes
             all_downstream_single_paths = list(nx.all_simple_paths(network_graph, from_node, initial_to_node, cutoff=None))
-            logging.warning(' Phase of Triplex Line {} is S. Plugginfg in phase from upstream node {}({})'.format(tpx, initial_to_node, phase))
+            logging.warning(' Phase of Triplex Line {} is S. Plugging in phase from upstream node {}({})'.format(tpx, initial_to_node, phase))
     
             for node in all_downstream_single_paths:
                 # Get all node pairs in path:

@@ -993,6 +993,7 @@ public class CIMImporter extends Object {
 			GldNode nd1 = mapNodes.get (obj.bus1);
 			nd1.nomvln = obj.basev / Math.sqrt(3.0);
 			GldNode nd2 = mapNodes.get (obj.bus2);
+			//System.out.format("  [%s]-[%s]\r\n", nd1.name, nd2.name);
 			nd2.nomvln = nd1.nomvln;
 			//nd1.AddPhases (obj.phases);
 			//nd2.AddPhases (obj.phases);
@@ -1803,13 +1804,23 @@ public class CIMImporter extends Object {
 															bWantSched, bWantZIP, randomZIP, useHouses, Zcoeff, Icoeff, Pcoeff);
 			System.out.println ("Sucessfully produced a model ");
 
-			String classpath = System.getProperty("java.class.path");
-			String[] classpathEntries = classpath.split(File.pathSeparator);
-			String python_dir = classpathEntries[0].split("blazegraph")[0] + "Clean_glm" + System.getProperty("file.separator") + "post_processing_glm_v3.py ";
-			String command = "python " + "\"" + python_dir + "\"";
-			String param = " " + fRoot + " " + "\"" +System.getProperty("user.dir") + "\"" ;
-			Process p = Runtime.getRuntime().exec(command + param) ;
-			System.out.println ("Sucessfully cleaned the model ");
+			if (fTarget.equals("glm")) {
+				String classpath = CIMImporter.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+				String classpath_v1 = classpath.replace("/", "\\");
+				String classpath_v2 = classpath_v1.substring(1, classpath_v1.replace("/", "\\").length() - 1);
+				String python_dir = classpath_v2.split("blazegraph")[0] + "Clean_glm" + "\\post_processing_glm_v3.py ";
+				String command = "python " + python_dir;
+				String param = " \"" + fRoot + "\" \"" + System.getProperty("user.dir") + "\"";
+				Process clean_glm = null;
+				try {
+					clean_glm = Runtime.getRuntime().exec("cmd /c start " + command + param);
+					clean_glm.waitFor();
+				} catch (Exception e) {
+					e.printStackTrace();
+					return;
+				}
+				System.out.println("Sucessfully cleaned the model ");
+			}
 
 //		} catch (RuntimeException e) {   ## MuMonish for adding the python cleaning script
 		} catch (IOException  e) {
