@@ -6,6 +6,8 @@ package gov.pnnl.goss.cim2glm.components;
 
 import org.apache.jena.query.*;
 import java.lang.Math.*;
+import java.util.HashMap;
+import java.util.HashSet;
 
 public class DistLineSpacing extends DistComponent {
 	public static final String szQUERY = 
@@ -58,6 +60,11 @@ public class DistLineSpacing extends DistComponent {
 	private boolean has_neutral;
 	private int nphases;
 
+	// only write the phasing permutations that are actually used
+	private HashSet<String> perms = new HashSet<>();
+	private boolean bTriplex;
+
+
 	public String GetJSONEntry () {
 		StringBuilder buf = new StringBuilder ();
 
@@ -76,6 +83,40 @@ public class DistLineSpacing extends DistComponent {
 				--nphases;
 				break;
 			}
+		}
+	}
+
+	public void MarkPermutationsUsed (String s) {
+		if (s.contains ("ABC") && nwires >= 3) {
+			perms.add ("ABC");
+		} else if (s.contains ("ACB") && nwires >= 3) {
+			perms.add ("ACB");
+		} else if (s.contains ("BAC") && nwires >= 3) {
+			perms.add ("BAC");
+		} else if (s.contains ("BCA") && nwires >= 3) {
+			perms.add ("BCA");
+		} else if (s.contains ("CAB") && nwires >= 3) {
+			perms.add ("CAB");
+		} else if (s.contains ("CBA") && nwires >= 3) {
+			perms.add ("CBA");
+		} else if (s.contains ("AB") && nwires >= 2) {
+			perms.add ("AB");
+		} else if (s.contains ("BA") && nwires >= 2) {
+			perms.add ("BA");
+		} else if (s.contains ("BC") && nwires >= 2) {
+			perms.add ("BC");
+		} else if (s.contains ("CB") && nwires >= 2) {
+			perms.add ("CB");
+		} else if (s.contains ("AC") && nwires >= 2) {
+			perms.add ("AC");
+		} else if (s.contains ("CA") && nwires >= 2) {
+			perms.add ("CA");
+		} else if (s.contains ("A") && nwires >= 1) {
+			perms.add ("A");
+		} else if (s.contains ("B") && nwires >= 1) {
+			perms.add ("B");
+		} else if (s.contains ("C") && nwires >= 1) {
+			perms.add ("C");
 		}
 	}
 
@@ -128,13 +169,14 @@ public class DistLineSpacing extends DistComponent {
 		return buf.toString();
 	}
 
+
 	public String GetDSS() {
 //		int nphases = nwires;  // TODO - remove this block if FindNeutral and private vars work
 //		if (phases[nwires-1].equals("N")) {
 //			--nphases;
 //		}
-		int i;
 
+		int i;
 		StringBuilder buf = new StringBuilder("new LineSpacing." + name + " nconds=" + Integer.toString(nwires) +
 																					 " nphases=" + Integer.toString(nphases) + " units=m\n");
 		buf.append ("~ x=[");
@@ -152,6 +194,9 @@ public class DistLineSpacing extends DistComponent {
 			}
 		}
 		buf.append ("]\n");
+
+
+
 		return buf.toString();
 	}
 

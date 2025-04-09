@@ -37,7 +37,7 @@ public class DistRecloser extends DistSwitch {
 	public String GetDSS () {
 		StringBuilder buf = new StringBuilder (super.GetDSS());
 
-		buf.append ("  new Recloser." + name + " MonitoredObj=Line." + name +
+		buf.append ("new Recloser." + name + " MonitoredObj=Line." + name +
 								" PhaseTrip=20000.0 GroundTrip=10000.0\n");
 		return buf.toString();
 	}

@@ -574,7 +574,7 @@ public class CIMImporter extends Object {
 		}
 		nLinks = mapLoadBreakSwitches.size() + mapLinesCodeZ.size() + mapLinesSpacingZ.size() + mapLinesInstanceZ.size() +
 			mapXfmrWindings.size() + mapTanks.size() + mapFuses.size() + mapDisconnectors.size() + mapBreakers.size() +
-			mapReclosers.size() + mapSectionalisers.size(); // standalone regulators not allowed in CIM
+			mapReclosers.size() + mapSectionalisers.size() + mapJumpers.size(); // standalone regulators not allowed in CIM
 		if (nLinks < 1) {
 			throw new RuntimeException ("no lines, transformers or switches");
 		}
@@ -1310,10 +1310,23 @@ public class CIMImporter extends Object {
 			mapBusXY.put (obj.bus1, new Double [] {pt1.x, pt1.y});
 			mapBusXY.put (obj.bus2, new Double [] {pt2.x, pt2.y});
 		}
+		//MuMonish: Adding JumperMaps
+		for (HashMap.Entry<String,DistJumper> pair : mapJumpers.entrySet()) {
+			DistJumper obj = pair.getValue();
+			pt1 = mapCoordinates.get("Jumper:" + obj.name + ":1");
+			pt2 = mapCoordinates.get("Jumper:" + obj.name + ":2");
+			mapBusXY.put (obj.bus1, new Double [] {pt1.x, pt1.y});
+			mapBusXY.put (obj.bus2, new Double [] {pt2.x, pt2.y});
+		}
 		for (HashMap.Entry<String,DistRecloser> pair : mapReclosers.entrySet()) {
 			DistRecloser obj = pair.getValue();
 			pt1 = mapCoordinates.get("Recloser:" + obj.name + ":1");
 			pt2 = mapCoordinates.get("Recloser:" + obj.name + ":2");
+			// MuMonish: Missing to_bus coordinates Using bus coordinates of from_bus
+			if(pt2 == null){
+				System.out.println ("Error here for from bus to bus: " + obj.bus1 + obj.bus2);
+				pt2 = pt1;
+			};
 			mapBusXY.put (obj.bus1, new Double [] {pt1.x, pt1.y});
 			mapBusXY.put (obj.bus2, new Double [] {pt2.x, pt2.y});
 		}
@@ -1452,6 +1465,11 @@ public class CIMImporter extends Object {
 		}
 		out.println();
 		for (HashMap.Entry<String,DistDisconnector> pair : mapDisconnectors.entrySet()) { // TODO - polymorphic mapSwitches
+			out.print (pair.getValue().GetDSS());
+			outID.println ("Line." + pair.getValue().name + "\t" + GUIDfromCIMmRID (pair.getValue().id));
+		}
+		out.println();
+		for (HashMap.Entry<String,DistJumper> pair : mapJumpers.entrySet()) {
 			out.print (pair.getValue().GetDSS());
 			outID.println ("Line." + pair.getValue().name + "\t" + GUIDfromCIMmRID (pair.getValue().id));
 		}
@@ -1809,7 +1827,7 @@ public class CIMImporter extends Object {
 				String classpath_v1 = classpath.replace("/", "\\");
 				String classpath_v2 = classpath_v1.substring(1, classpath_v1.replace("/", "\\").length() - 1);
 				String python_dir = classpath_v2.split("blazegraph")[0] + "Clean_glm" + "\\post_processing_glm_v3.py ";
-				String command = "python " + python_dir;
+				String command = "E:\\Software\\anaconda3\\python.exe " + python_dir;
 				String param = " \"" + fRoot + "\" \"" + System.getProperty("user.dir") + "\"";
 				Process clean_glm = null;
 				try {

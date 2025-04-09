@@ -21,7 +21,7 @@ public class DistBreaker extends DistSwitch {
 	public String GetDSS () {
 		StringBuilder buf = new StringBuilder (super.GetDSS());
 
-		buf.append ("  new Relay." + name + " MonitoredObj=Line." + name +
+		buf.append ("new Relay." + name + " MonitoredObj=Line." + name +
 								" Type=Current Delay=0.1 PhaseTrip=20000.0 GroundTrip=10000.0\n");
 		return buf.toString();
 	}

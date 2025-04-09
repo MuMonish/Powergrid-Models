@@ -219,15 +219,15 @@ def clean_raw_glm(feeder_name, wrk_dir):
 ############## Closing the open Switches ###################################### 
 ###############################################################################
     
-    if feeder_name == '3HT12F7':
+    if '3HT12F7' in feeder_name:
         if '"swt__402-2046554-0"' in model['fuse'].keys():
             del model['fuse']['"swt__402-2046554-0"']
     
-    elif feeder_name == '3HT12F1':
+    elif '3HT12F1' in feeder_name:
         if '"swt__402-36571-0"' in model['fuse'].keys():
              model['fuse']['"swt__402-36571-0"']['phases'] = 'ABN'
     
-    elif feeder_name == '3HT12F5':
+    elif '3HT12F5' in feeder_name:
         del model['fuse']['"jump__403-1655962-0"']
         model['fuse']['"swt__402-52580-0"']['phases'] = 'ABCN'       
         model['fuse']['"swt__402-1526071-0"']['phases'] = 'ABCN' 
@@ -357,5 +357,6 @@ if __name__ == '__main__':
     if len(sys.argv)>1:
         clean_raw_glm(sys.argv[1], sys.argv[2]) 
     else:
-        clean_raw_glm('3HT12F7', 'E:\CIMTool\CIM_Importer_raw_files') 
+        # clean_raw_glm('3HT12F7', 'E:\CIMTool\CIM_Importer_raw_files') 
+        clean_raw_glm('3HT12F1_v2', 'E:\CIMTool\CIM_to_GLM_raw_files') 
     

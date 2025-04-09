@@ -39,7 +39,7 @@ public class DistFuse extends DistSwitch {
 	public String GetDSS () {
 		StringBuilder buf = new StringBuilder (super.GetDSS());
 
-		buf.append ("  new Fuse." + name + " MonitoredObj=Line." + name +
+		buf.append ("new Fuse." + name + " MonitoredObj=Line." + name +
 								" RatedCurrent=" + df2.format (rated) + "\n");
 		return buf.toString();
 	}

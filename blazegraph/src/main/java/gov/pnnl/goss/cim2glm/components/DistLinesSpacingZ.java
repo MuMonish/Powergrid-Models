@@ -90,7 +90,7 @@ public class DistLinesSpacingZ extends DistLineSegment {
 			basev = Double.parseDouble (soln.get("?basev").toString());
 			spacing = soln.get("?spacing").toString();
 			//wname = soln.get("?wname").toString();
-			//wclass = soln.get("?wclass").toString();
+			// wclass = soln.get("?wclass").toString(); //Edits: OpenDSS
 			nwires = 0;
 			phases = OptionalString (soln, "?phases", "");
 			if (phases.length() > 0) {
@@ -154,17 +154,24 @@ public class DistLinesSpacingZ extends DistLineSegment {
 		StringBuilder buf = new StringBuilder ("new Line." + name);
 		boolean bCable = false;
 
-		buf.append (" phases=" + Integer.toString(DSSPhaseCount(phases, false)) + 
-								" bus1=" + DSSBusPhases(bus1, phases) + " bus2=" + DSSBusPhases (bus2, phases) + 
-								" length=" + df1.format(len * gFTperM) + " spacing=" + spacing + " units=ft\n");
-		if (wclass.equals("OverheadWireInfo")) {
-			buf.append ("~ wires=[");
-		} else if (wclass.equals("ConcentricNeutralCableInfo")) {
-			buf.append ("~ CNCables=[");
+		buf.append (" phases=" + Integer.toString(DSSPhaseCount(phases, false)) +
+				" bus1=" + DSSBusPhases(bus1, phases) + " bus2=" + DSSBusPhases (bus2, phases) +
+				//" length=" + df1.format(len * gFTperM) + " spacing=" + spacing + "_" + phases + " units=ft"); MuMonish: matching the spacing format
+				" length=" + df1.format(len * gFTperM) + " spacing=" + spacing + " units=ft");
+		//AppendDSSRatings (buf, normalCurrentLimit, emergencyCurrentLimit);
+		if (wire_classes[0].equals("OverheadWireInfo")) {
+			// buf.append ("~ wires=["); //MuMonish: Getting rid of ~ to make print line objs in a single line
+			buf.append (" wires=[");
+		} else if (wire_classes[0].equals("ConcentricNeutralCableInfo")) {
+			//buf.append ("~ CNCables=["); //MuMonish: Getting rid of ~ to make print line objs in a single line
+			buf.append (" CNCables=[");
 			bCable = true;
-		} else if (wclass.equals("TapeShieldCableInfo")) {
-			buf.append ("~ TSCables=[");
+		} else if (wire_classes[0].equals("TapeShieldCableInfo")) {
+			//buf.append ("~ TSCables=["); //MuMonish: Getting rid of ~ to make print line objs in a single line
+			buf.append (" TSCables=[");
 			bCable = true;
+		} else { //MuMonish: Wires for lines with missing conductor data
+			buf.append (" CNCables=["); //MuMonish: Getting rid of ~ to make print line objs in a single line
 		}
 		for (int i = 0; i < nwires; i++) {
 			if (bCable == true && wire_classes[i].equals("OverheadWireInfo")) {
@@ -172,7 +179,11 @@ public class DistLinesSpacingZ extends DistLineSegment {
 			} else if (i > 0) {
 				buf.append (",");
 			}
-			buf.append(wire_names[i]);
+			if (wire_names[i] == "") { //MuMonish: unknown_ wires for lines with missing conductor data
+				buf.append("unknown");
+			} else {
+				buf.append(wire_names[i]);
+			}
 		}
 		buf.append("]\n");
 		return buf.toString();

@@ -21,15 +21,15 @@ public class DistLoad extends DistComponent {
 	 	" ?s c:EnergyConsumer.qfixed ?q."+
 	 	" ?s c:EnergyConsumer.phaseConnection ?connraw."+
 	 	" 			bind(strafter(str(?connraw),\"PhaseShuntConnectionKind.\") as ?conn)"+
-	 	" ?s c:EnergyConsumer.LoadResponse ?lr."+
-	 	" ?lr c:LoadResponseCharacteristic.pConstantImpedance ?pz."+
-	 	" ?lr c:LoadResponseCharacteristic.qConstantImpedance ?qz."+
-	 	" ?lr c:LoadResponseCharacteristic.pConstantCurrent ?pi."+
-	 	" ?lr c:LoadResponseCharacteristic.qConstantCurrent ?qi."+
-	 	" ?lr c:LoadResponseCharacteristic.pConstantPower ?pp."+
-	 	" ?lr c:LoadResponseCharacteristic.qConstantPower ?qp."+
-	 	" ?lr c:LoadResponseCharacteristic.pVoltageExponent ?pe."+
-	 	" ?lr c:LoadResponseCharacteristic.qVoltageExponent ?qe."+
+//	 	" ?s c:EnergyConsumer.LoadResponse ?lr."+
+//	 	" ?lr c:LoadResponseCharacteristic.pConstantImpedance ?pz."+
+//	 	" ?lr c:LoadResponseCharacteristic.qConstantImpedance ?qz."+
+//	 	" ?lr c:LoadResponseCharacteristic.pConstantCurrent ?pi."+
+//	 	" ?lr c:LoadResponseCharacteristic.qConstantCurrent ?qi."+
+//	 	" ?lr c:LoadResponseCharacteristic.pConstantPower ?pp."+
+//	 	" ?lr c:LoadResponseCharacteristic.qConstantPower ?qp."+
+//	 	" ?lr c:LoadResponseCharacteristic.pVoltageExponent ?pe."+
+//	 	" ?lr c:LoadResponseCharacteristic.qVoltageExponent ?qe."+
 	 	" OPTIONAL {?ecp c:EnergyConsumerPhase.EnergyConsumer ?s."+
 	 	" ?ecp c:EnergyConsumerPhase.phase ?phsraw."+
 	 	" 			bind(strafter(str(?phsraw),\"SinglePhaseKind.\") as ?phs) }"+
@@ -162,7 +162,7 @@ public class DistLoad extends DistComponent {
 		}
 
 		buf.append (" phases=" + Integer.toString(nphases) + " bus1=" + DSSShuntPhases (bus, phases, bDelta) + 
-								" conn=" + DSSConn(bDelta) + " kw=" + df3.format(p) + " kvar=" + df3.format(q) +
+								" conn=" + DSSConn(bDelta) + " kw=" + df5.format(p) + " kvar=" + df5.format(q) +
 								" numcust=1 kv=" + df3.format(kv) + " model=" + Integer.toString(dss_load_model));
 		if (dss_load_model == 8) {
 			buf.append (" zipv=" + GetZIPV());

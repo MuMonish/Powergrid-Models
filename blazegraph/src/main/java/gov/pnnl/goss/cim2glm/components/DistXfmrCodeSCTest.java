@@ -9,7 +9,7 @@ import java.util.HashMap;
 
 public class DistXfmrCodeSCTest extends DistComponent {
 	public static final String szQUERY = 
-		"SELECT DiSTINCT ?pname ?tname ?enum ?gnum ?z ?ll WHERE {"+
+		"SELECT DiSTINCT ?pname ?tname ?enum ?gnum ?z ?ll ?base WHERE {"+
 		" ?fdr c:IdentifiedObject.mRID ?fdrid."+
 		" ?xft c:TransformerTank.PowerTransformer ?eq."+
 		" ?eq c:Equipment.EquipmentContainer ?fdr."+
@@ -26,6 +26,7 @@ public class DistXfmrCodeSCTest extends DistComponent {
 		" ?sct c:ShortCircuitTest.loss ?ll."+
 		" ?sct c:ShortCircuitTest.GroundedEnds ?grnd."+
 		" ?grnd c:TransformerEndInfo.endNumber ?gnum."+
+		" ?grnd c:TransformerEndInfo.ratedS ?base." +
 		"} ORDER BY ?pname ?tname ?enum ?gnum";
 
 	public static final String szCountQUERY =
@@ -50,6 +51,7 @@ public class DistXfmrCodeSCTest extends DistComponent {
 	public int[] twdg;
 	public double[] z;
 	public double[] ll;
+	public double[] sbase;
 
 	public int size;
 
@@ -67,6 +69,7 @@ public class DistXfmrCodeSCTest extends DistComponent {
 		twdg = new int[size];
 		z = new double[size];
 		ll = new double[size];
+		sbase = new double[size];
 	}
 
 	public DistXfmrCodeSCTest (ResultSet results, HashMap<String,Integer> map) {
@@ -82,6 +85,7 @@ public class DistXfmrCodeSCTest extends DistComponent {
 				twdg[i] = Integer.parseInt (soln.get("?gnum").toString());
 				z[i] = Double.parseDouble (soln.get("?z").toString());
 				ll[i] = Double.parseDouble (soln.get("?ll").toString());
+				sbase[i] = Double.parseDouble (soln.get("?base").toString());
 				if ((i + 1) < size) {
 					soln = results.next();
 				}

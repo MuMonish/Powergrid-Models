@@ -188,7 +188,11 @@ public abstract class DistComponent {
 	static String DSSBusPhases (String bus, String phs) {
     if (phs.contains ("ABC")) {
       return bus + ".1.2.3";
-    } else if (phs.contains ("AB") || phs.contains ("A:B")) {
+    }
+    else if (phs.contains ("A:B:C:N")) {
+		return bus + ".1.2.3.0";
+	}
+    else if (phs.contains ("AB") || phs.contains ("A:B")) {
       return bus + ".1.2";
 		} else if (phs.contains ("12")) {
 			return bus + ".1.2";
@@ -240,6 +244,16 @@ public abstract class DistComponent {
 		return ret.toString();
 	}
 
+	static String CSVPhaseString (String cim_phases) {
+		StringBuilder ret = new StringBuilder();
+		if (cim_phases.contains ("A")) ret.append ("A");
+		if (cim_phases.contains ("B")) ret.append ("B");
+		if (cim_phases.contains ("C")) ret.append ("C");
+		if (cim_phases.contains ("s1")) ret.append ("s1");
+		if (cim_phases.contains ("s2")) ret.append ("s2");
+		if (cim_phases.contains ("s12")) ret.append ("s12");
+		return ret.toString();
+	}
 	/** 
 	 *  Rotates a phasor +120 degrees by multiplication
 		 */
@@ -390,7 +404,37 @@ public abstract class DistComponent {
 		return "** Unsupported **";  // TODO - this could be solvable as UNKNOWN in some cases
 	}
 
- 	public abstract String DisplayString();
+	protected void AppendGLMRatings (StringBuilder buf, String phs, double normAmps, double emergAmps) {
+		String[] phases = {"A", "B", "C"};
+		if (normAmps > 0.0) {
+			String sNorm = df2.format (normAmps);
+			for (String p: phases) {
+				if (phs.contains(p)) {
+					buf.append ("  continuous_rating_" + p + " " + sNorm + ";\n");
+				}
+			}
+		}
+		if (emergAmps > 0.0) {
+			String sEmerg = df2.format (emergAmps);
+			for (String p: phases) {
+				if (phs.contains(p)) {
+					buf.append ("  emergency_rating_" + p + " " + sEmerg + ";\n");
+				}
+			}
+		}
+	}
+
+	protected void AppendDSSRatings (StringBuilder buf, double normAmps, double emergAmps) {
+		if (normAmps > 0.0) {
+			buf.append ("~ normamps=" + df2.format (normAmps));
+			if (emergAmps > 0.0) {
+				buf.append (" emergamps=" + df2.format (emergAmps));
+			}
+			buf.append ("\n");
+		}
+	}
+
+	public abstract String DisplayString();
  	public abstract String GetKey();
 	public abstract String GetJSONEntry();
 

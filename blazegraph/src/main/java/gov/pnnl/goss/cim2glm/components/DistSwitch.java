@@ -99,6 +99,7 @@ public abstract class DistSwitch extends DistComponent {
 			} else {
 				glm_phases = glm_phs.toString();
 			}
+			phases = phases.replace ('\n', ':');
 		}		
 	}
 
@@ -160,13 +161,17 @@ public abstract class DistSwitch extends DistComponent {
 	public String GetDSS () {
 		StringBuilder buf = new StringBuilder ("new Line." + name);
 
-		buf.append (" phases=" + Integer.toString(DSSPhaseCount(phases, false)) + 
-								" bus1=" + DSSBusPhases(bus1, phases) + " bus2=" + DSSBusPhases (bus2, phases) + 
-								" switch=y // CIM " + CIMClass() + "\n");
+//		buf.append (" phases=" + Integer.toString(DSSPhaseCount(phases, false)) +
+//								" bus1=" + DSSBusPhases(bus1, phases) + " bus2=" + DSSBusPhases (bus2, phases) +
+//								" switch=y // CIM " + CIMClass() + "\n");
+		//MuMonish mapping by glmphases instead of phases
+		buf.append (" phases=" + Integer.toString(DSSPhaseCount(glm_phases, false)) +
+				" bus1=" + DSSBusPhases(bus1, glm_phases) + " bus2=" + DSSBusPhases (bus2, glm_phases) +
+				" switch=y // CIM " + CIMClass() + "\n");
 		if (open) {
-			buf.append ("  open Line." + name + " 1\n");
+			buf.append ("open Line." + name + " 1\n");
 		} else {
-			buf.append ("  close Line." + name + " 1\n");
+			buf.append ("close Line." + name + " 1\n");
 		}
 
 		return buf.toString();
