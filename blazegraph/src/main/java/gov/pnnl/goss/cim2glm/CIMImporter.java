@@ -655,6 +655,7 @@ public class CIMImporter extends Object {
 		SortedSet<String> keys = new TreeSet<String>(map.keySet());
 		for (String key : keys) {
 			out.print (map.get(key).GetJSONSymbols (mapCoordinates, mapTanks));
+			out.print (map.get(key).GetJSONSymbols (mapCoordinates, mapTanks));
 			if (count++ < last) {
 				out.println (",");
 			} else {

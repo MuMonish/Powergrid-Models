@@ -135,6 +135,7 @@ public abstract class DistSwitch extends DistComponent {
 		DistCoordinates pt2 = map.get(CIMClass() + ":" + name + ":2");
 
 		StringBuilder buf = new StringBuilder ();
+		System.out.println(name + bus1 );
 
 		buf.append ("{\"name\":\"" + name + "\"");
 		buf.append (",\"from\":\"" + bus1 + "\"");
@@ -143,6 +144,11 @@ public abstract class DistSwitch extends DistComponent {
 		buf.append (",\"open\":\"" + Boolean.toString(open) +"\"");
 		buf.append (",\"x1\":" + Double.toString(pt1.x));
 		buf.append (",\"y1\":" + Double.toString(pt1.y));
+		// Mumonish temporary bandaid
+		if(pt1 == null) {
+			buf.append(",\"x1\":" + Double.toString(0));
+			buf.append(",\"y1\":" + Double.toString(0));
+		}
 
 		//EJL 3/22/2019 -Avista models define switch a single point
 		if(pt2 != null) {
@@ -151,8 +157,11 @@ public abstract class DistSwitch extends DistComponent {
 		}
 		else //unsure if a second point is needed; copy pt1 just in case
 		{
-			buf.append(",\"x2\":" + Double.toString(pt1.x));
-			buf.append(",\"y2\":" + Double.toString(pt1.y));
+//			buf.append(",\"x2\":" + Double.toString(pt1.x));
+//			buf.append(",\"y2\":" + Double.toString(pt1.y));
+			// Mumonish temporary bandaid
+			buf.append(",\"x2\":" + Double.toString(0));
+			buf.append(",\"y2\":" + Double.toString(0));
 		}
 		buf.append("}");
 		return buf.toString();
